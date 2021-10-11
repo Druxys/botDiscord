@@ -4,6 +4,8 @@ const {Intents} = require("discord.js");
 
 dotenv.config();
 
+var unsuedVar = null;
+
 const client = new DiscordJs.Client({
     intents: [
         Intents.FLAGS.GUILDS,
