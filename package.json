@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,10 @@
   "dependencies": {
     "@discordjs/rest": "^0.1.0-canary.0",
     "discord-api-types": "^0.23.1",
-    "discord.js": "^13.2.0"
+    "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.10.3"
   }
 }
