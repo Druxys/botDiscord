@@ -1,6 +1,6 @@
 const DiscordJs = require('discord.js');
 const dotenv = require('dotenv');
-const {Intents} = require("discord.js");
+const {Intents, VoiceState, ThreadChannel} = require("discord.js");
 
 dotenv.config();
 
@@ -19,6 +19,25 @@ client.on('messageCreate', (message) => {
         message.reply({
             content: 'pong'
         })
+    }
+})
+
+client.on('messageCreate', (message) => {
+    if (message.content === '/roulette') {
+        message.member.voice.channel.client.
+        var nb = Math.floor(Math.random() * 7);
+        if (nb === 6) {
+            message.member.voice.disconnect("CHEH").then(r =>
+                message.reply({
+                 content: '**PAN**'
+                })
+            );
+        }else{
+            message.reply({
+                content: '*click*'
+            })
+        }
+
     }
 })
 client.login(process.env.TOKEN);
