@@ -4,6 +4,8 @@ const {Intents, VoiceState, ThreadChannel} = require("discord.js");
 
 dotenv.config();
 
+var unsuedVar = null;
+
 const client = new DiscordJs.Client({
     intents: [
         Intents.FLAGS.GUILDS,
@@ -24,7 +26,6 @@ client.on('messageCreate', (message) => {
 
 client.on('messageCreate', (message) => {
     if (message.content === '/roulette') {
-        message.member.voice.channel.client.
         var nb = Math.floor(Math.random() * 7);
         if (nb === 6) {
             message.member.voice.disconnect("CHEH").then(r =>
