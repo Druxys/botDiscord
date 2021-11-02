@@ -1,9 +1,8 @@
+const {SlashCommandBuilder, Intents} = require('@discordjs/builders');
 const DiscordJs = require('discord.js');
+const {REST} = require('@discordjs/rest');
+const {Routes} = require('discord-api-types/v9');
 const dotenv = require('dotenv');
-const {Intents, VoiceState, ThreadChannel} = require("discord.js");
-const {createAudioPlayer, createAudioResource, StreamType, entersState, AudioPlayerStatus, joinVoiceChannel,
-    VoiceConnectionStatus
-} = require("@discordjs/voice");
 
 dotenv.config();
 
@@ -15,66 +14,36 @@ const client = new DiscordJs.Client({
     ]
 });
 
-const player = createAudioPlayer();
+const commands = [
+    new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
+    new SlashCommandBuilder().setName('server').setDescription('Replies with server info!'),
+    new SlashCommandBuilder().setName('user').setDescription('Replies with user info!'),
+]
+    .map(command => command.toJSON());
 
-function playSong(src) {
-    const resource = createAudioResource('./assets/songs/'+src, {
-        inputType: StreamType.Arbitrary,
-    });
+const rest = new REST({version: '9'}).setToken(process.env.TOKEN);
 
-    player.play(resource);
+rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), {body: commands})
+    .then(() => console.log('Successfully registered application commands.'))
+    .catch(console.error);
 
-    return entersState(player, AudioPlayerStatus.Playing, 5e3);
-}
 
-async function connectToChannel(channel) {
-    const connection = joinVoiceChannel({
-        channelId: channel.id,
-        guildId: channel.guild.id,
-        adapterCreator: channel.guild.voiceAdapterCreator,
-    });
-
-    try {
-        await entersState(connection, VoiceConnectionStatus.Ready, 30e3);
-        return connection;
-    } catch (error) {
-        connection.destroy();
-        throw error;
-    }
-}
-
-client.on('ready', async () => {
-    console.log('Discord.js client is ready!');
-    try {
-        console.log('Song is ready to play!');
-    } catch (error) {
-        console.error(error);
-    }
+client.once('ready', () => {
+    console.log('Ready!');
 });
 
-client.on('messageCreate', async (message) => {
-    if (message.content === '/roulette') {
-        var nb = Math.floor(Math.random() * 7);
-        let channel = message.member.voice.channel;
-        if (channel) {
-            try {
-                const connection = await connectToChannel(channel);
-                connection.subscribe(player);
-                message.reply('Playing now!');
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            message.reply('Join a voice channel then try again!');
-        }
-        if (nb === 6) {
-            message.member.voice.disconnect("CHEH").then(r =>
-                playSong('44-magnum.mp3'),
-            );
-        } else {
-            playSong('emptygun.mp3');
-        }
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+
+    const {commandName} = interaction;
+
+    if (commandName === 'ping') {
+        await interaction.reply('Pong!');
+    } else if (commandName === 'server') {
+        await interaction.reply('Server info.');
+    } else if (commandName === 'user') {
+        await interaction.reply('User info.');
     }
-})
+});
 
 client.login(process.env.TOKEN);
